@@ -35,7 +35,7 @@ module.exports = {
         });
 
         if (args.length < 1) {
-            return message.channel.send(`Vous devez spécifier un préfixe à définir pour ce serveur! Votre préfixe de serveur actuel est \`${settings.prefix}\``).then(m => m.delete({timeout: 10000}));
+            return message.channel.send(`Vous devez spécifier un préfixe à définir pour ce serveur \`${settings.prefix}prefix <prefix>\`! Votre préfixe de serveur actuel est \`${settings.prefix}\``).then(m => m.delete({timeout: 10000}));
         };
 
         await settings.updateOne({

@@ -73,6 +73,7 @@ module.exports = {
                 })
                 .then(result => console.log(result))
                 .catch(err => console.error(err));
+                console.log("Ban ✅!")
             };
         });
 

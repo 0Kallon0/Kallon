@@ -16,7 +16,7 @@ module.exports = {
     usage: 'botinfo',
     category: 'Utility',
     guildOnly: true,
-    run: async (args, message) => {
+    run: async (client, message) => {
         let cpuLol;
         cpuStat.usagePercent(async function (err, percent, seconds) {
             if (err) {
@@ -27,10 +27,10 @@ module.exports = {
                 .setAuthor(message.client.user.username)
                 .setTitle("__**Stats:**__")
                 .setColor("RANDOM")
-                .addField("`⏳` Memoire RAM", `${(process.memoryUsage().heapUsed / 1024 / 1024).toFixed(2)} / ${(os.totalmem() / 1024 / 1024).toFixed(2)} MB`, true)
-                .addField("`⌚️` Disponibilité ", `${duration}`, true)
-                .addField("`📁` Utilisateur", `${message.client.users.cache.size}`, true)
-                .addField("`📁` Serveurs", `${message.client.guilds.cache.size}`, true)
+                .addField("`⏳` Mem Usage", `${(process.memoryUsage().heapUsed / 1024 / 1024).toFixed(2)} / ${(os.totalmem() / 1024 / 1024).toFixed(2)} MB`, true)
+                .addField("`⌚️` Uptime ", `${duration}`, true)
+                .addField("`📁` Users", `${message.client.users.cache.size}`, true)
+                .addField("`📁` Servers", `${message.client.guilds.cache.size}`, true)
                 .addField("`📁` Channels ", `${message.client.channels.cache.size}`, true)
                 .addField("`👾` Discord.js", `v${version}`, true)
                 .addField("`🤖` Node", `${process.version}`, true)
@@ -40,6 +40,7 @@ module.exports = {
                 .addField("`💻` Platform", `\`\`${os.platform()}\`\``, true)
                 .addField("API Latency", `${(message.client.ws.ping)}ms`)
          message.channel.send(botinfo)
+         console.log("Botinfo ✅!")
         });
     }
 }

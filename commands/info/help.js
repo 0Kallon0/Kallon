@@ -1,80 +1,79 @@
-const { MessageEmbed } = require('discord.js');
-const Guild = require('../../models/guild');
-const mongoose = require('mongoose');
+const { MessageEmbed } = require("discord.js");
+const { stripIndents } = require("common-tags");
+const utils = require('../../utils');
 
 module.exports = {
-    name: 'help',
-    aliases: ['h'],
-    category: 'info',
-    description: 'Displays bot help message.',
-    usage: `help [commandName]`,
+    name: "help",
+    aliases: ["h"],
+    category: "info",
+    description: "Returns all commands, or one specific command info",
+    usage: "[command | alias]",
     run: async (client, message, args) => {
-        await Guild.findOne({
-            guildID: message.guild.id
-        }, (err, guild) => {
-            if (err) console.error(err)
-            if (!guild) {
-                const newGuild = new Guild({
-                    _id: mongoose.Types.ObjectId(),
-                    guildID: message.guild.id,
-                    guildName: message.guild.name,
-                    prefix: process.env.PREFIX,
-                    logChannelID: null
-                });
-    
-                newGuild.save()
-                .then(result => console.log(result))
-                .catch(err => console.error(err));
-            }
-        });
-
+        // If there's an args found
+        // Send the info of that command found
+        // If no info found, return not found embed.
         if (args[0]) {
             return getCMD(client, message, args[0]);
         } else {
-            return helpMSG(client, message);
+            // Otherwise send all the commands available
+            // Without the cmd info
+            return getAll(client, message);
         }
     }
 }
 
-async function helpMSG(client, message) {
-    const guildDB = await Guild.findOne({
-        guildID: message.guild.id
-    });
-
+function getAll(client, message) {
     const embed = new MessageEmbed()
-        .setColor(process.env.COLOR)
-        .setTitle('Discord.js Tutorials')
-        .setThumbnail(client.user.avatarURL())
-        .setDescription(`For a full list of commands, please type \`${guildDB.prefix}commands\` \n\nTo see more info about a specific command, please type \`${guildDB.prefix}help <command>\` without the \`<>\``)
-        .addField('About', "This bot is used for Sleepless Kyru's Discord.js tutorial series on YouTube! Please consider subscribiing if you like this type of content :smile:")
-        .addField('Links', "[YouTube](https://www.youtube.com/channel/UCeujGfgR1JARTyQyfnlQBrA)\n[Twitch](https://www.twitch.tv/sleeplesskyru)\n[Twitter](https://twitter.com/SleeplessKyruRL)\n[Sleepless' Main Discord Server](https://discord.gg/WKDeFzz)")
-        .setFooter('Created by Sleepless Kyru#7615');
-    message.channel.send(embed);
+        .setColor("#FFDFD3")
+        .setThumbnail("https://media.discordapp.net/attachments/745709789933207622/746370526171103292/607486.jpg")
+        .setTitle('Help | Menu')
+        .setURL('https://www.youtube.com/watch?v=X1JRoP0xCqs')
+        .setFooter("To see command descriptions and usage type .help [CMD Name]")
+        
+    // Map all the commands
+    // with the specific category
+    const commands = (category) => {
+        return client.commands
+            .filter(cmd => cmd.category === category)
+            .map(cmd => `\`${cmd.name}\``)
+            .join(", ");
+    }
+
+    // Map all the categories
+    const info = client.categories
+        .map(cat => stripIndents`**${cat[0].toUpperCase() + cat.slice(1)}** \n${commands(cat)}`)
+        .reduce((string, category) => string + "\n" + category);
+
+        message.reply('Sent help to dms')
+        console.log("Help ✅!")
+
+        
+
+    return message.author.send(embed.setDescription(info));
+    
 }
 
-async function getCMD(client, message, input) {
-    const guildDB = await Guild.findOne({
-        guildID: message.guild.id
-    });
-
+function getCMD(client, message, input) {
     const embed = new MessageEmbed()
 
+    // Get the cmd by the name or alias
     const cmd = client.commands.get(input.toLowerCase()) || client.commands.get(client.aliases.get(input.toLowerCase()));
-
+    
     let info = `No information found for command **${input.toLowerCase()}**`;
 
+    // If no cmd is found, send not found embed
     if (!cmd) {
-        return message.channel.send(embed.setColor('#ff0000').setDescription(info));
+        return message.channel.send(embed.setColor("RED").setDescription(info));
     }
 
-    if (cmd.name) info = `**Command Name**: ${cmd.name}`
-    if (cmd.aliases) info += `\n**Aliases**: ${cmd.aliases.map(a => `\`{a}\``).join(', ')}`;
+    // Add all cmd info to the embed
+    if (cmd.name) info = `**Command name**: ${cmd.name}`;
+    if (cmd.aliases) info += `\n**Aliases**: ${cmd.aliases.map(a => `\`${a}\``).join(", ")}`;
     if (cmd.description) info += `\n**Description**: ${cmd.description}`;
     if (cmd.usage) {
-        info += `\n**Usage**: ${guildDB.prefix}${cmd.usage}`;
-        embed.setFooter('<> = REQUIRED | [] = OPTIONAL')
+        info += `\n**Usage**: ${cmd.usage}`;
+        embed.setFooter(`Syntax: <> = required, [] = optional`);
     }
-    if (cmd.usage2) info += `\n**Usage 2**: ${guildDB.prefix}${cmd.usage2}`;
 
-    return message.channel.send(embed.setColor(process.env.COLOR).setDescription(info));
+    return message.channel.send(embed.setColor("GREEN").setDescription(info));
 }

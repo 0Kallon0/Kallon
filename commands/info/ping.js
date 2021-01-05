@@ -11,9 +11,9 @@ module.exports = {
         const embed = new MessageEmbed()
         .setColor(process.env.COLOR)
         .setTitle('🏓 Pong!')
-        .setDescription(`Bot Latency is **${Math.floor(msg.createdTimestamp - message.createdTimestamp)} ms** \nAPI Latency is **${Math.round(client.ws.ping)} ms**`);
+        .setDescription(`Bot**${Math.floor(msg.createdTimestamp - message.createdTimestamp)} ms** \nAPI**${Math.round(client.ws.ping)} ms**`);
 
         message.channel.send(embed);
-        console.log("commandes ping effectué")
+        console.log("Ping ✅!")
     }
 }

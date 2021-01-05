@@ -20,6 +20,7 @@ module.exports = {
                 .setDescription(args.slice(1).join(' '))
 
             message.channel.send(embed);
+            console.log("Say ✅!")
         } else {
             message.channel.send(args.join(' '));
         }
