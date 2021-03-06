@@ -6,19 +6,21 @@ module.exports = {
             useNewUrlParser: true,
             useUnifiedTopology: true,
             autoIndex: false,
-            reconnectTries: Number.MAX_VALUE,
-            reconnectInterval: 500,
             poolSize: 5,
             connectTimeoutMS: 10000,
-            family:4
+            family:4,
+            keepAlive: true,
+            useNewUrlParser: true,
+            useUnifiedTopology: true,
+            useFindAndModify: false,
         };
 
-        mongoose.connect('mongodb+srv://admin:Baptiste223@cluster0.snpgr.mongodb.net/<dbname>?retryWrites=true&w=majority', dbOptions);
+        mongoose.connect('mongodb+srv://Kallon:Baptiste223@cluster0.q3vl4.mongodb.net/EveryBotV2?retryWrites=true&w=majority', dbOptions);
         mongoose.set('useFindAndModify', false);
         mongoose.Promise = global.Promise;
 
         mongoose.connection.on('connected', () => {
-            console.log('Mongoose has successfully connected!');
+            console.log('Mongoose connecté ✅');
         });
 
         mongoose.connection.on('err', err => {
